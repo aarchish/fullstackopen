@@ -1,45 +1,60 @@
 const App = () => {
-  const course = 'Half Stack application development'
-  const part1 = 'Fundamentals of React'
-  const exercises1 = 10
-  const part2 = 'Using props to pass data'
-  const exercises2 = 7
-  const part3 = 'State of a component'
-  const exercises3 = 14
-  const partsArray = [part1, part2, part3]
-  const exercisesArray = [exercises1, exercises2, exercises3]
+  const course = {
+    name: 'Half Stack application development',
+    parts: [
+      {
+        name: 'Fundamentals of React',
+        exercises: 10
+      },
+      {
+        name: 'Using props to pass data',
+        exercises: 7
+      },
+      {
+        name: 'State of a component',
+        exercises: 14
+      }
+    ]
+  }
+  //const partsArray = [part1, part2, part3]
+  //const exercisesArray = [exercises1, exercises2, exercises3]
 
   return (
     <div>
       <Header course={course} />
-      <Content partsArray={partsArray} exercisesArray={exercisesArray} />
-      <Total exercisesArray={exercisesArray}/>
+      <Content parts={course.parts} />
+      <Total parts={course.parts} />
     </div>
   )
 }
 
 const Header = (props) => {
-  return <h1>{props.course}</h1>
+  console.log("Header props", props);
+  return <h1>{props.course.name}</h1>
 }
 
 const Content = (props) => {
-  const partsArray = props.partsArray;
-  const exercisesArray = props.exercisesArray;
+  console.log("Content props", props);
+  const partsArray = props.parts;
   return (
     <div>
-      <Part part={partsArray[0]} exercises={exercisesArray[0]}/>
-      <Part part={partsArray[1]} exercises={exercisesArray[1]}/>
-      <Part part={partsArray[2]} exercises={exercisesArray[2]}/>
+      <Part part={partsArray[0]}/>
+      <Part part={partsArray[1]}/>
+      <Part part={partsArray[2]}/>
     </div>
   )
 }
 
 const Part = (props) => {
-  return <p>{props.part} {props.exercises}</p>
+  console.log("Part props", props);
+  const partObj = props.part;
+  return <p>{partObj.name} {partObj.exercises}</p>
 }
 
 const Total = (props) => {
-  const exercisesArray = props.exercisesArray;
+  console.log("Total props", props);
+  const partsArray = props.parts;
+  const exercisesArray = partsArray.map(part => part.exercises);
   return <p>Number of exercises {exercisesArray[0] + exercisesArray[1] + exercisesArray[2]}</p>
 }
 
