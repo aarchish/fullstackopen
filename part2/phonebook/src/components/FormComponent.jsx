@@ -1,7 +1,7 @@
 import React from 'react'
+import personsservice from '../services/personsservice'
 
-const Form = ({props}) => {
-  const {persons, setPersons, newName, setNewName, newNumber, setNewNumber} = props
+const Form = ({ persons, setPersons, newName, setNewName, newNumber, setNewNumber }) => {
 
   const handleFormSubmit = (event) => {
     event.preventDefault()
@@ -13,10 +13,17 @@ const Form = ({props}) => {
       number: newNumber
     }
     if (persons.find(person => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+      const id = persons.find(person => person.name === newName).id
+      if( window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        personsservice.update(id, personObject).then(returnedPerson => {
+          setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+        })
+      }
       return
     }
-    setPersons(persons.concat(personObject))
+    personsservice.create(personObject).then(returnedPerson => {
+      setPersons(persons.concat(returnedPerson))
+    })
     setNewName('')
     setNewNumber('')
   }

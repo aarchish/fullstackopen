@@ -1,7 +1,6 @@
 import React from 'react'
 
-const Filter = ({props}) => {
-    const {persons, searchTerm, setSearchTerm, setSearchResults} = props
+const Filter = ({persons, searchTerm, setSearchTerm, setSearchResults}) => {
     
     const handleSearchChange = (event) => {
         const searchTerm = event.target.value
