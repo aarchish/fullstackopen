@@ -1,7 +1,7 @@
 import React from 'react'
 import personsservice from '../services/personsservice'
 
-const Form = ({ persons, setPersons, newName, setNewName, newNumber, setNewNumber }) => {
+const Form = ({ persons, setPersons, newName, setNewName, newNumber, setNewNumber, handleNotification }) => {
 
   const handleFormSubmit = (event) => {
     event.preventDefault()
@@ -12,20 +12,44 @@ const Form = ({ persons, setPersons, newName, setNewName, newNumber, setNewNumbe
       name: newName,
       number: newNumber
     }
-    if (persons.find(person => person.name === newName)) {
-      const id = persons.find(person => person.name === newName).id
+
+    const existingPerson = persons.find(person => person.name === newName)
+
+    if (existingPerson) {
+      const existingId = existingPerson.id
       if( window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
-        personsservice.update(id, personObject).then(returnedPerson => {
-          setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+        personsservice
+        .update(existingId, personObject)
+        .then(returnedPerson => {
+          setPersons(persons.map(person => person.id !== existingId ? person : returnedPerson))
+          handleNotification(`Updated ${newName}`, 'success')
+        })
+        .catch(error => {
+          if(error.response.status === 404) {
+            handleNotification(`Information of ${newName} has already been removed from the server`, 'error')
+            setPersons(persons.filter(person => person.id !== existingId))
+          }
+          else {
+            handleNotification(`Error updating ${newName}`, 'error')
+          }
         })
       }
       return
     }
-    personsservice.create(personObject).then(returnedPerson => {
+
+    personsservice.create(personObject)
+    .then(returnedPerson => {
       setPersons(persons.concat(returnedPerson))
+      handleNotification(`Added ${newName}`, 'success')
     })
+    .catch(error => {
+      console.error('Error adding person:', error)
+      handleNotification(error.response.data.error, 'error')
+    })
+
     setNewName('')
     setNewNumber('')
+
   }
 
   const handlePersonsChange = (event) => {
